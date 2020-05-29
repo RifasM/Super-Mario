@@ -17,7 +17,7 @@ GLvoid *font_style = GLUT_STROKE_MONO_ROMAN;
 void renderStrokeFont(int x,int y,int z,const char* temp)
 {
   glPushMatrix();
-  glColor3f(0,1,0.752);
+  glColor3f(1,1,0.825);
   glTranslatef(x,y,z);
   glLineWidth(5);
   glScalef(0.2,0.2,0.2);
@@ -43,12 +43,12 @@ unsigned int loadTexture(const char* filename)
 	return id;
 }
 
-unsigned int basewall,brick,pipe;
-unsigned int mario,question,enemy;
-unsigned int cloud,bush,hill, blue;
+unsigned int basewall,brick, pipe;
+unsigned int mario, question, enemy;
+unsigned int cloud,bush ,hill, back;
 unsigned int coin, block;
 
-unsigned int basewall_2;
+unsigned int basewall_2, bird;
 
 void init()
 {
@@ -58,32 +58,42 @@ void init()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_TEXTURE_2D);
-
-    basewall = loadTexture("./bmps/newbase.bmp");
-    brick = loadTexture("./bmps/brick.bmp");
-    mario = loadTexture("./bmps/mario.bmp");
+    
     question = loadTexture("./bmps/question.bmp");
     cloud = loadTexture("./bmps/cloud.bmp");
     bush = loadTexture("./bmps/bush.bmp");
     hill = loadTexture("./bmps/hill.bmp");
     pipe = loadTexture("./bmps/pipe.bmp");
-    enemy = loadTexture("./bmps/owl.bmp");
-    blue = loadTexture("./bmps/blue.bmp");
     block = loadTexture("./bmps/block.bmp");
-    coin = loadTexture("./bmps/coin.bmp");
-    
-    basewall_2 = loadTexture("./bmps/newbase_2.bmp");
+   
 }
 
 void display()
 {
+glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+if(world == 1){
+    	basewall = loadTexture("./bmps/newbase.bmp");
+    	brick = loadTexture("./bmps/brick.bmp");
+    	enemy = loadTexture("./bmps/owl.bmp");
+    	coin = loadTexture("./bmps/coin_1.bmp");
+    	mario = loadTexture("./bmps/mario_1.bmp");
+    	back = loadTexture("./bmps/blue.bmp");
+    }
+    else{
+    	basewall = loadTexture("./bmps/newbase_2.bmp");
+    	brick = loadTexture("./bmps/brick.bmp");
+        coin = loadTexture("./bmps/coin_2.bmp");
+        mario = loadTexture("./bmps/mario_2.bmp");
+        back = loadTexture("./bmps/black.bmp");
+        enemy = loadTexture("./bmps/bird.bmp");
+    }
 	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 	// glLoadIdentity();
     GLint startx=0, starty=0;
 
 if(game_over != 1 && game_over!= 2 && time_left != 0){
-    //Draw Base-wall
     if(world == 1){
+ 	    glClearColor(0.48,0.47,1.0,1.0);
 	    for(int i=0;i<22;i++){
 
 		glBindTexture(GL_TEXTURE_2D, basewall);
@@ -186,11 +196,11 @@ if(game_over != 1 && game_over!= 2 && time_left != 0){
 		if(i>=9 && i<=13)
 		{
 		    if(b1 == 0 || b1 == 2 && i == 9)
-		    	glBindTexture(GL_TEXTURE_2D, blue);
+		    	glBindTexture(GL_TEXTURE_2D, back);
 		    else if(b2 == 0 || b2 == 2 && i == 11)
-		    	glBindTexture(GL_TEXTURE_2D, blue);
+		    	glBindTexture(GL_TEXTURE_2D, back);
 		    else if(b3 == 0 || b3 == 2 && i == 13)
-		    	glBindTexture(GL_TEXTURE_2D, blue);
+		    	glBindTexture(GL_TEXTURE_2D, back);
 		    else if(i%2)
 		        glBindTexture(GL_TEXTURE_2D, brick);
 		    else if(i == 12 && q2 == 1)
@@ -213,24 +223,26 @@ if(game_over != 1 && game_over!= 2 && time_left != 0){
 	    }
     }
     else if(world == 2){
-    	if(init_lev == 0){
-	    	game_status = "Level Completed!";
-		renderStrokeFont(600,400,1,game_status.c_str());
-		init_lev += 0.5;
-	}
-	else if(init_lev == 200){
-		game_status = "Level 2";
-		renderStrokeFont(600,400,1,game_status.c_str());
-		init_lev += 0.5;
+	glClearColor(0,0,0,1);
+    	if(init_lev >= 0 && init_lev < 100){
+	    	string disp = "Level 1 Completed!";
+		renderStrokeFont(600,500,1,disp.c_str());
+		disp = "Level 2";
+		renderStrokeFont(600,400,1,disp.c_str());
+		init_lev += 1;
 		time_left = 1000;
 		marioPosX = marioPosY = 0;
+		x = 0;
+		alive = b1 = b2 = b3 = q1 = 1;
+		q2 = 0;
 	}
-	else{
-		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-		glClearColor(0.725,0.725,0.725,1.0);	
+	else if(init_lev>=100){
+		if(marioPosY == -1)
+			marioPosY == 0;
+	
 		for(int i=0;i<22;i++){
 
-			glBindTexture(GL_TEXTURE_2D, basewall_2);
+			glBindTexture(GL_TEXTURE_2D, basewall);
 			glBegin(GL_QUADS);
 			    glTexCoord2f(0.0,1.0);
 			    glVertex3f(startx,starty,0.0);
@@ -241,6 +253,63 @@ if(game_over != 1 && game_over!= 2 && time_left != 0){
 			    glTexCoord2f(1.0,1.0);
 			    glVertex3f(startx+64,starty,0.0);
 			glEnd();
+			
+			glPushMatrix();
+			if(i==10 && alive == 1){
+			    glTranslatef(-x,0,2);
+			    glBindTexture(GL_TEXTURE_2D, enemy);
+			    glBegin(GL_QUADS);
+				glTexCoord2f(0.0,1.0);
+				glVertex3f(startx,starty+128,0.0);
+				glTexCoord2f(0.0,0.0);
+				glVertex3f(startx,starty+64+128,0.0);
+				glTexCoord2f(1.0,0.0);
+				glVertex3f(startx+64,starty+64+128,0.0);
+				glTexCoord2f(1.0,1.0);
+				glVertex3f(startx+64,starty+128,0.0);
+			    glEnd();
+			    }
+			glPopMatrix();
+			
+			if(i==7){
+			   glBindTexture(GL_TEXTURE_2D, coin);
+			    glBegin(GL_QUADS);
+				glTexCoord2f(0.0,1.0);
+				glVertex3f(startx,starty+664,0.0);
+				glTexCoord2f(0.0,0.0);
+				glVertex3f(startx,starty+32+664,0.0);
+				glTexCoord2f(1.0,0.0);
+				glVertex3f(startx+32,starty+32+664,0.0);
+				glTexCoord2f(1.0,1.0);
+				glVertex3f(startx+32,starty+664,0.0);
+			    glEnd();
+			}
+			
+			if(i>=9 && i<=13)
+			{
+			    if(b1 == 0 || b1 == 2 && i == 9)
+			    	glBindTexture(GL_TEXTURE_2D, back);
+			    else if(b2 == 0 || b2 == 2 && i == 11)
+			    	glBindTexture(GL_TEXTURE_2D, back);
+			    else if(b3 == 0 || b3 == 2 && i == 13)
+			    	glBindTexture(GL_TEXTURE_2D, back);
+			    else if(i%2)
+				glBindTexture(GL_TEXTURE_2D, brick);
+			    else if(i == 12 && q2 == 1)
+			    	glBindTexture(GL_TEXTURE_2D, block);
+			    else
+				glBindTexture(GL_TEXTURE_2D, question);
+			    glBegin(GL_QUADS);
+				glTexCoord2f(0.0,1.0);
+				glVertex3f(startx,starty+320,0.0);
+				glTexCoord2f(0.0,0.0);
+				glVertex3f(startx,starty+64+320,0.0);
+				glTexCoord2f(1.0,0.0);
+				glVertex3f(startx+64,starty+64+320,0.0);
+				glTexCoord2f(1.0,1.0);
+				glVertex3f(startx+64,starty+320,0.0);
+			    glEnd();
+			}
 			
 			startx+=64;
 		}
@@ -307,9 +376,9 @@ if(game_over != 1 && game_over!= 2 && time_left != 0){
     }
     // scoring part ends
     
-    if(marioPosX == 970 && marioPosY <= 150)
+    if(marioPosX == 970 && marioPosY <= 150 && world == 1)
     	runR = 0;
-    else if(marioPosX == 1130 && marioPosY <= 150)
+    else if(marioPosX == 1130 && marioPosY <= 150 && world == 1)
     	runL = 0;
  
     if(runR == 1)
@@ -318,7 +387,7 @@ if(game_over != 1 && game_over!= 2 && time_left != 0){
     	if(marioPosX != 0)
     		marioPosX -= 10;
     
-    if(marioPosX >= 970 && marioPosX <= 1130 && marioPosY >= 150 && down == 0)
+    if(marioPosX >= 970 && marioPosX <= 1130 && marioPosY >= 150 && down == 0 && world == 1)
     	marioPosY = 170;
     
     if(up == 1 && jump == 0){
@@ -342,17 +411,17 @@ if(game_over != 1 && game_over!= 2 && time_left != 0){
     
     if(600-marioPosX == x && marioPosY==0)
     	game_over = 1;
-    else if(marioPosX >= 570 && marioPosX <= 590 && marioPosY >= 160 && b1 != 2)
+    else if(marioPosX >= 570 && marioPosX <= 590 && marioPosY >= 160 && b1 != 2 && world == 1)
     	 b1 = 0;
-    else if(marioPosX >= 690 && marioPosX <= 710 && marioPosY >= 160 && b2 != 2)
+    else if(marioPosX >= 690 && marioPosX <= 710 && marioPosY >= 160 && b2 != 2 && world == 1)
     	 b2 = 0;
-    else if(marioPosX >= 820 && marioPosX <= 840 && marioPosY >= 160 && b3 != 2)
+    else if(marioPosX >= 820 && marioPosX <= 840 && marioPosY >= 160 && b3 != 2 && world == 1)
     	 b3 = 0;
-    else if(marioPosX >= 620 && marioPosX <= 660 && marioPosY >= 160 && q1 != 2)
+    else if(marioPosX >= 620 && marioPosX <= 660 && marioPosY >= 160 && q1 != 2 && world == 1)
     	 q1 = 1;
     else if((600-marioPosX <= x+10 || 600-marioPosX <= x-10)  && marioPosY<=64 && alive != 2)
     	alive = 0;
-    else if(marioPosX >= 760 && marioPosX <= 800 && marioPosY >= 160 && mushroom != 2)
+    else if(marioPosX >= 760 && marioPosX <= 800 && marioPosY >= 160 && mushroom != 2 && world == 1)
         mushroom = 1;
     else if(marioPosX >= 1200)
     	game_over = 2;
