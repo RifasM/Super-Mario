@@ -10,24 +10,27 @@ GLfloat x=0;
 int marioPosX = 0, marioPosY = 0, runR=0, runL=0, jump=0, game_over=0, alive = 1;
 int b1 = 1, b2 = 1, b3 = 1, up = 0, mushroom = 0, score = 0, time_left = 1000;
 int show = 1, down = 0, ques = 0, q1 = 0, q2 = 0, world = 1, h = 0;
-float grow = 1,  init_lev = 0;
+float grow = 1,  init_lev = 0, red = 1, green = 1, blue = 1;
 string game_status = "Game Over!!";
 
 GLvoid *font_style = GLUT_STROKE_MONO_ROMAN;
 void renderStrokeFont(int x,int y,int z,const char* temp)
 {
   glPushMatrix();
-  
+
   glTranslatef(x,y,z);
+  cout<<x<<" "<<y<<" "<<z<<"\n";
   glLineWidth(5);
   glScalef(0.2,0.2,0.2);
   const char *c;
 
-  glColor3f(1,1,0.825);
+  //cout<<red<<" "<<green<<" "<<blue<<"\n";
   for(c=temp; *c != '\0'; c++)
     glutStrokeCharacter(font_style, *c);
-  
-  glColor3f(1,1,1);
+
+  glColor3f(red, green, blue);
+
+  //glColor3f(1,1,1);
   glPopMatrix();
 }
 
@@ -53,7 +56,7 @@ unsigned int basewall_2, bird;
 
 void init()
 {
-    glClearColor(0.48,0.47,1.0,1.0);	//background color and alpha
+    //glClearColor(0.48,0.47,1.0,1.0);	//background color and alpha
     glOrtho(0.0,1360.0,0.0,760.0,-10.0,10.0);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -87,7 +90,6 @@ if(world == 1){
         back = loadTexture("./bmps/black.bmp");
         enemy = loadTexture("./bmps/bird.bmp");
     }
-	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 	// glLoadIdentity();
     GLint startx=0, starty=0;
 
@@ -225,136 +227,137 @@ if(game_over != 1 && game_over!= 2 && time_left != 0){
     }
     else if(world == 2){
         glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-	glClearColor(0,0,0,1);
+		glClearColor(0,0,0,1);
     	if(init_lev >= 0 && init_lev < 100){
+    		glClearColor(1,1,1,1);
 	    	string disp = "Level 1 Completed!";
-		renderStrokeFont(600,500,1,disp.c_str());
-		disp = "Level 2";
-		renderStrokeFont(600,400,1,disp.c_str());
-		init_lev += 1;
-		time_left = 1000;
-		marioPosX = 70;
-		x = 0;
-		alive = b1 = b2 = b3 = 1;
-		q2 = q1 = 0;
-	}
-	else if(init_lev>=100){
-		if(marioPosY < 0)
-			marioPosY = 0;
-	
-		for(int i=0;i<22;i++){
-
-			glBindTexture(GL_TEXTURE_2D, basewall);
-			glBegin(GL_QUADS);
-			    glTexCoord2f(0.0,1.0);
-			    glVertex3f(startx,starty,0.0);
-			    glTexCoord2f(0.0,0.0);
-			    glVertex3f(startx,starty+128,0.0);
-			    glTexCoord2f(1.0,0.0);
-			    glVertex3f(startx+64,starty+128,0.0);
-			    glTexCoord2f(1.0,1.0);
-			    glVertex3f(startx+64,starty,0.0);
-			glEnd();
-			
-			if(i== 0){
-			for(int j = 0; j < 800 ; j+=64){
-				glBindTexture(GL_TEXTURE_2D, brick);
-				    glBegin(GL_QUADS);
-					glTexCoord2f(0.0,1.0);
-					glVertex3f(startx,starty+j,0.0);
-					glTexCoord2f(0.0,0.0);
-					glVertex3f(startx,starty+64+j,0.0);
-					glTexCoord2f(1.0,0.0);
-					glVertex3f(startx+64,starty+64+j,0.0);
-					glTexCoord2f(1.0,1.0);
-					glVertex3f(startx+64,starty+j,0.0);
-				    glEnd();
-			    }
-			}
-			glPushMatrix();
-			if(i==10 && alive == 1){
-			    glTranslatef(-x,0,2);
-			    glBindTexture(GL_TEXTURE_2D, enemy);
-			    glBegin(GL_QUADS);
-				glTexCoord2f(0.0,1.0);
-				glVertex3f(startx,starty+128,0.0);
-				glTexCoord2f(0.0,0.0);
-				glVertex3f(startx,starty+64+128,0.0);
-				glTexCoord2f(1.0,0.0);
-				glVertex3f(startx+64,starty+64+128,0.0);
-				glTexCoord2f(1.0,1.0);
-				glVertex3f(startx+64,starty+128,0.0);
-			    glEnd();
-			    }
-			glPopMatrix();
-			
-			if(i==7){
-			   glBindTexture(GL_TEXTURE_2D, coin);
-			    glBegin(GL_QUADS);
-				glTexCoord2f(0.0,1.0);
-				glVertex3f(startx,starty+664,0.0);
-				glTexCoord2f(0.0,0.0);
-				glVertex3f(startx,starty+32+664,0.0);
-				glTexCoord2f(1.0,0.0);
-				glVertex3f(startx+32,starty+32+664,0.0);
-				glTexCoord2f(1.0,1.0);
-				glVertex3f(startx+32,starty+664,0.0);
-			    glEnd();
-			}
-			
-			if(i>=9 && i<=13)
-			{
-			    if(i == 10 && q2 == 1)
-			    	glBindTexture(GL_TEXTURE_2D, block);
-			    else if(i == 13 && q1 == 1)
-			    	glBindTexture(GL_TEXTURE_2D, block);
-			    else
-				glBindTexture(GL_TEXTURE_2D, question);
-			    glBegin(GL_QUADS);
-				glTexCoord2f(0.0,1.0);
-				glVertex3f(startx,starty+320,0.0);
-				glTexCoord2f(0.0,0.0);
-				glVertex3f(startx,starty+64+320,0.0);
-				glTexCoord2f(1.0,0.0);
-				glVertex3f(startx+64,starty+64+320,0.0);
-				glTexCoord2f(1.0,1.0);
-				glVertex3f(startx+64,starty+320,0.0);
-			    glEnd();
-			}
-			
-			if(i == 16 && b1 == 1){
-			    glBindTexture(GL_TEXTURE_2D, brick);
-			    glBegin(GL_QUADS);
-				glTexCoord2f(0.0,1.0);
-				glVertex3f(startx,starty+320,0.0);
-				glTexCoord2f(0.0,0.0);
-				glVertex3f(startx,starty+64+320,0.0);
-				glTexCoord2f(1.0,0.0);
-				glVertex3f(startx+64,starty+64+320,0.0);
-				glTexCoord2f(1.0,1.0);
-				glVertex3f(startx+64,starty+320,0.0);
-			    glEnd();
-			}
-			
-			if(i>2 && i<22){
-				glBindTexture(GL_TEXTURE_2D, brick);
-			    glBegin(GL_QUADS);
-				glTexCoord2f(0.0,1.0);
-				glVertex3f(startx,starty+720,0.0);
-				glTexCoord2f(0.0,0.0);
-				glVertex3f(startx,starty+64+720,0.0);
-				glTexCoord2f(1.0,0.0);
-				glVertex3f(startx+64,starty+64+720,0.0);
-				glTexCoord2f(1.0,1.0);
-				glVertex3f(startx+64,starty+720,0.0);
-			    glEnd();
-			}
-			
-			startx+=64;
+			renderStrokeFont(600,500,1,disp.c_str());
+			disp = "Level 2";
+			renderStrokeFont(600,400,1,disp.c_str());
+			init_lev += 1;
+			time_left = 1000;
+			marioPosX = 70;
+			x = 0;
+			show = 1;
+			alive = b1 = b2 = b3 = 1;
+			q2 = q1 = 0;
 		}
+		else if(init_lev>=100){
+			if(marioPosY < 0)
+				marioPosY = 0;
+		
+			for(int i=0;i<22;i++){
+
+				glBindTexture(GL_TEXTURE_2D, basewall);
+				glBegin(GL_QUADS);
+					glVertex3f(startx,starty,0.0);
+					glTexCoord2f(0.0,0.0);
+					glVertex3f(startx,starty+128,0.0);
+					glTexCoord2f(1.0,0.0);
+					glVertex3f(startx+64,starty+128,0.0);
+					glTexCoord2f(1.0,1.0);
+					glVertex3f(startx+64,starty,0.0);
+				glEnd();
+				
+				if(i== 0){
+				for(int j = 0; j < 800 ; j+=64){
+					glBindTexture(GL_TEXTURE_2D, brick);
+						glBegin(GL_QUADS);
+						glTexCoord2f(0.0,1.0);
+						glVertex3f(startx,starty+j,0.0);
+						glTexCoord2f(0.0,0.0);
+						glVertex3f(startx,starty+64+j,0.0);
+						glTexCoord2f(1.0,0.0);
+						glVertex3f(startx+64,starty+64+j,0.0);
+						glTexCoord2f(1.0,1.0);
+						glVertex3f(startx+64,starty+j,0.0);
+						glEnd();
+					}
+				}
+				glPushMatrix();
+				if(i==10 && alive == 1){
+					glTranslatef(-x,0,2);
+					glBindTexture(GL_TEXTURE_2D, enemy);
+					glBegin(GL_QUADS);
+					glTexCoord2f(0.0,1.0);
+					glVertex3f(startx,starty+128,0.0);
+					glTexCoord2f(0.0,0.0);
+					glVertex3f(startx,starty+64+128,0.0);
+					glTexCoord2f(1.0,0.0);
+					glVertex3f(startx+64,starty+64+128,0.0);
+					glTexCoord2f(1.0,1.0);
+					glVertex3f(startx+64,starty+128,0.0);
+					glEnd();
+					}
+				glPopMatrix();
+				
+				if(i==7){
+				glBindTexture(GL_TEXTURE_2D, coin);
+					glBegin(GL_QUADS);
+					glTexCoord2f(0.0,1.0);
+					glVertex3f(startx,starty+664,0.0);
+					glTexCoord2f(0.0,0.0);
+					glVertex3f(startx,starty+32+664,0.0);
+					glTexCoord2f(1.0,0.0);
+					glVertex3f(startx+32,starty+32+664,0.0);
+					glTexCoord2f(1.0,1.0);
+					glVertex3f(startx+32,starty+664,0.0);
+					glEnd();
+				}
+				
+				if(i>=9 && i<=13)
+				{
+					if(i == 10 && q2 == 1)
+						glBindTexture(GL_TEXTURE_2D, block);
+					else if(i == 13 && q1 == 1)
+						glBindTexture(GL_TEXTURE_2D, block);
+					else
+					glBindTexture(GL_TEXTURE_2D, question);
+					glBegin(GL_QUADS);
+					glTexCoord2f(0.0,1.0);
+					glVertex3f(startx,starty+320,0.0);
+					glTexCoord2f(0.0,0.0);
+					glVertex3f(startx,starty+64+320,0.0);
+					glTexCoord2f(1.0,0.0);
+					glVertex3f(startx+64,starty+64+320,0.0);
+					glTexCoord2f(1.0,1.0);
+					glVertex3f(startx+64,starty+320,0.0);
+					glEnd();
+				}
+				
+				if(i == 16 && b1 == 1){
+					glBindTexture(GL_TEXTURE_2D, brick);
+					glBegin(GL_QUADS);
+					glTexCoord2f(0.0,1.0);
+					glVertex3f(startx,starty+320,0.0);
+					glTexCoord2f(0.0,0.0);
+					glVertex3f(startx,starty+64+320,0.0);
+					glTexCoord2f(1.0,0.0);
+					glVertex3f(startx+64,starty+64+320,0.0);
+					glTexCoord2f(1.0,1.0);
+					glVertex3f(startx+64,starty+320,0.0);
+					glEnd();
+				}
+				
+				if(i>2 && i<22){
+					glBindTexture(GL_TEXTURE_2D, brick);
+					glBegin(GL_QUADS);
+					glTexCoord2f(0.0,1.0);
+					glVertex3f(startx,starty+720,0.0);
+					glTexCoord2f(0.0,0.0);
+					glVertex3f(startx,starty+64+720,0.0);
+					glTexCoord2f(1.0,0.0);
+					glVertex3f(startx+64,starty+64+720,0.0);
+					glTexCoord2f(1.0,1.0);
+					glVertex3f(startx+64,starty+720,0.0);
+					glEnd();
+				}
+				
+				startx+=64;
+			}
 
 
-	}
+		}
 	    
     }
 
