@@ -9,7 +9,7 @@ using namespace std;
 GLfloat x=0;
 int marioPosX = 0, marioPosY = 0, runR=0, runL=0, jump=0, game_over=0, alive = 1;
 int b1 = 1, b2 = 1, b3 = 1, up = 0, mushroom = 0, score = 0, time_left = 1000;
-int show = 1, down = 0, ques = 0, q1 = 0, q2 = 0, world = 1;
+int show = 1, down = 0, ques = 0, q1 = 0, q2 = 0, world = 1, h = 0;
 float grow = 1,  init_lev = 0;
 string game_status = "Game Over!!";
 
@@ -17,12 +17,13 @@ GLvoid *font_style = GLUT_STROKE_MONO_ROMAN;
 void renderStrokeFont(int x,int y,int z,const char* temp)
 {
   glPushMatrix();
-  glColor3f(1,1,0.825);
+  
   glTranslatef(x,y,z);
   glLineWidth(5);
   glScalef(0.2,0.2,0.2);
   const char *c;
 
+  glColor3f(1,1,0.825);
   for(c=temp; *c != '\0'; c++)
     glutStrokeCharacter(font_style, *c);
   
@@ -70,10 +71,9 @@ void init()
 
 void display()
 {
-glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 if(world == 1){
     	basewall = loadTexture("./bmps/newbase.bmp");
-    	brick = loadTexture("./bmps/brick.bmp");
+    	brick = loadTexture("./bmps/brick_1.bmp");
     	enemy = loadTexture("./bmps/owl.bmp");
     	coin = loadTexture("./bmps/coin_1.bmp");
     	mario = loadTexture("./bmps/mario_1.bmp");
@@ -81,7 +81,7 @@ if(world == 1){
     }
     else{
     	basewall = loadTexture("./bmps/newbase_2.bmp");
-    	brick = loadTexture("./bmps/brick.bmp");
+    	brick = loadTexture("./bmps/brick_2.bmp");
         coin = loadTexture("./bmps/coin_2.bmp");
         mario = loadTexture("./bmps/mario_2.bmp");
         back = loadTexture("./bmps/black.bmp");
@@ -93,6 +93,7 @@ if(world == 1){
 
 if(game_over != 1 && game_over!= 2 && time_left != 0){
     if(world == 1){
+   	    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
  	    glClearColor(0.48,0.47,1.0,1.0);
 	    for(int i=0;i<22;i++){
 
@@ -223,6 +224,7 @@ if(game_over != 1 && game_over!= 2 && time_left != 0){
 	    }
     }
     else if(world == 2){
+        glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 	glClearColor(0,0,0,1);
     	if(init_lev >= 0 && init_lev < 100){
 	    	string disp = "Level 1 Completed!";
@@ -231,14 +233,14 @@ if(game_over != 1 && game_over!= 2 && time_left != 0){
 		renderStrokeFont(600,400,1,disp.c_str());
 		init_lev += 1;
 		time_left = 1000;
-		marioPosX = marioPosY = 0;
+		marioPosX = 70;
 		x = 0;
-		alive = b1 = b2 = b3 = q1 = 1;
-		q2 = 0;
+		alive = b1 = b2 = b3 = 1;
+		q2 = q1 = 0;
 	}
 	else if(init_lev>=100){
-		if(marioPosY == -1)
-			marioPosY == 0;
+		if(marioPosY < 0)
+			marioPosY = 0;
 	
 		for(int i=0;i<22;i++){
 
@@ -254,6 +256,21 @@ if(game_over != 1 && game_over!= 2 && time_left != 0){
 			    glVertex3f(startx+64,starty,0.0);
 			glEnd();
 			
+			if(i== 0){
+			for(int j = 0; j < 800 ; j+=64){
+				glBindTexture(GL_TEXTURE_2D, brick);
+				    glBegin(GL_QUADS);
+					glTexCoord2f(0.0,1.0);
+					glVertex3f(startx,starty+j,0.0);
+					glTexCoord2f(0.0,0.0);
+					glVertex3f(startx,starty+64+j,0.0);
+					glTexCoord2f(1.0,0.0);
+					glVertex3f(startx+64,starty+64+j,0.0);
+					glTexCoord2f(1.0,1.0);
+					glVertex3f(startx+64,starty+j,0.0);
+				    glEnd();
+			    }
+			}
 			glPushMatrix();
 			if(i==10 && alive == 1){
 			    glTranslatef(-x,0,2);
@@ -287,15 +304,9 @@ if(game_over != 1 && game_over!= 2 && time_left != 0){
 			
 			if(i>=9 && i<=13)
 			{
-			    if(b1 == 0 || b1 == 2 && i == 9)
-			    	glBindTexture(GL_TEXTURE_2D, back);
-			    else if(b2 == 0 || b2 == 2 && i == 11)
-			    	glBindTexture(GL_TEXTURE_2D, back);
-			    else if(b3 == 0 || b3 == 2 && i == 13)
-			    	glBindTexture(GL_TEXTURE_2D, back);
-			    else if(i%2)
-				glBindTexture(GL_TEXTURE_2D, brick);
-			    else if(i == 12 && q2 == 1)
+			    if(i == 10 && q2 == 1)
+			    	glBindTexture(GL_TEXTURE_2D, block);
+			    else if(i == 13 && q1 == 1)
 			    	glBindTexture(GL_TEXTURE_2D, block);
 			    else
 				glBindTexture(GL_TEXTURE_2D, question);
@@ -308,6 +319,34 @@ if(game_over != 1 && game_over!= 2 && time_left != 0){
 				glVertex3f(startx+64,starty+64+320,0.0);
 				glTexCoord2f(1.0,1.0);
 				glVertex3f(startx+64,starty+320,0.0);
+			    glEnd();
+			}
+			
+			if(i == 16 && b1 == 1){
+			    glBindTexture(GL_TEXTURE_2D, brick);
+			    glBegin(GL_QUADS);
+				glTexCoord2f(0.0,1.0);
+				glVertex3f(startx,starty+320,0.0);
+				glTexCoord2f(0.0,0.0);
+				glVertex3f(startx,starty+64+320,0.0);
+				glTexCoord2f(1.0,0.0);
+				glVertex3f(startx+64,starty+64+320,0.0);
+				glTexCoord2f(1.0,1.0);
+				glVertex3f(startx+64,starty+320,0.0);
+			    glEnd();
+			}
+			
+			if(i>2 && i<22){
+				glBindTexture(GL_TEXTURE_2D, brick);
+			    glBegin(GL_QUADS);
+				glTexCoord2f(0.0,1.0);
+				glVertex3f(startx,starty+720,0.0);
+				glTexCoord2f(0.0,0.0);
+				glVertex3f(startx,starty+64+720,0.0);
+				glTexCoord2f(1.0,0.0);
+				glVertex3f(startx+64,starty+64+720,0.0);
+				glTexCoord2f(1.0,1.0);
+				glVertex3f(startx+64,starty+720,0.0);
 			    glEnd();
 			}
 			
@@ -341,45 +380,58 @@ if(game_over != 1 && game_over!= 2 && time_left != 0){
     	
     //cout<<"Mario("<<marioPosX<<", "<<marioPosY<<")\n";
     
+    
+    if(world == 1){
     // scoring part starts
-    if(alive == 0){
-    	score += 100;
-    	alive = 2;
-    }
-    
-    if(grow >= 1.2 && mushroom == 1){
-    	score += 100;
-    	mushroom = 2;
-    }
-    
-    if(b1 == 0){
-    	score += 100;
-    	b1 = 2;
-    }
+	    if(alive == 0){
+	    	score += 100;
+	    	alive = 2;
+	    }
+	    
+	    if(grow >= 1.2 && mushroom == 1){
+	    	score += 100;
+	    	mushroom = 2;
+	    }
+	    
+	    if(b1 == 0){
+	    	score += 100;
+	    	b1 = 2;
+	    }
 
-    if(b2 == 0){
-    	score += 100;
-    	b2 = 2;
-    }
+	    if(b2 == 0){
+	    	score += 100;
+	    	b2 = 2;
+	    }
 
-    if(b3 == 0){
-    	score += 100;
-    	b3 = 2;
+	    if(b3 == 0){
+	    	score += 100;
+	    	b3 = 2;
+	    }
+	    
+	    if(q1 == 1)	
+	    	q1 = 2;
+	    else if(q1 == 2 && jump == 0){
+	    	q1 = 0;
+	    	score += 100;
+	    	ques++;
+	    }
+	    // scoring part ends
+	    
+	    if(marioPosX == 970 && marioPosY <= 150)
+	    	runR = 0;
+	    else if(marioPosX == 1130 && marioPosY <= 150)
+	    	runL = 0;
+	    	
+	    if(marioPosX >= 970 && marioPosX <= 1130 && marioPosY >= 150 && down == 0)
+    		marioPosY = 170;
+    	
+    	    if(mushroom == 1 && grow <= 1.2 && mushroom !=2 && world == 1){
+	    	grow+= 0.01;
+	    	q2 = 1;
+    	    }
     }
     
-    if(q1 == 1)	
-    	q1 = 2;
-    else if(q1 == 2 && jump == 0){
-    	q1 = 0;
-    	score += 100;
-    	ques++;
-    }
-    // scoring part ends
     
-    if(marioPosX == 970 && marioPosY <= 150 && world == 1)
-    	runR = 0;
-    else if(marioPosX == 1130 && marioPosY <= 150 && world == 1)
-    	runL = 0;
  
     if(runR == 1)
     	marioPosX +=10;
@@ -387,8 +439,7 @@ if(game_over != 1 && game_over!= 2 && time_left != 0){
     	if(marioPosX != 0)
     		marioPosX -= 10;
     
-    if(marioPosX >= 970 && marioPosX <= 1130 && marioPosY >= 150 && down == 0 && world == 1)
-    	marioPosY = 170;
+    
     
     if(up == 1 && jump == 0){
     	jump = 1;
@@ -402,12 +453,16 @@ if(game_over != 1 && game_over!= 2 && time_left != 0){
     else if(up == 0 && jump == 1 && marioPosY == 0)
         jump = 0;
     
-    if(mushroom == 1 && grow <= 1.2 && mushroom !=2){
-    	grow+= 0.01;
-    	q2 = 1;
-    }
     
-    int len, i;
+    if(q2 == 2 && world == 2){
+    	q2 = 1;
+    	ques++;
+    }
+    else if(q1 == 2 && world == 2){
+    	q1 = 1;
+    	ques++;
+    }
+   
     
     if(600-marioPosX == x && marioPosY==0)
     	game_over = 1;
@@ -425,12 +480,19 @@ if(game_over != 1 && game_over!= 2 && time_left != 0){
         mushroom = 1;
     else if(marioPosX >= 1200)
     	game_over = 2;
+    	
+    if(marioPosX >= 620 && marioPosX <= 660 && marioPosY >= 160 && q2 == 0 && world == 2)
+    	 q2 = 2;
+    if(marioPosX >= 820 && marioPosX <= 840 && marioPosY >= 160 && q1 == 0 && world == 2)
+         q1 = 2;
+    if(marioPosX >= 990 && marioPosX <= 1030 && marioPosY >= 160 && b1 == 1 && world == 2)
+         b1 = 0;
     
     if(marioPosX >= 970 && marioPosX <= 1130 && marioPosY == 0 && down == 1)
     	down = 0;
     else if(marioPosX >= 970 && marioPosX <= 1130 && marioPosY <= 170 && marioPosX >= 64 && down == 1){
-    	marioPosY --;
-    	marioPosX = 0;
+    	marioPosY--;
+    	marioPosX = 80;
     	show = -1;
     	world = 2;
     }
