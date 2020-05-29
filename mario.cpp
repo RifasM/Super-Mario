@@ -10,7 +10,7 @@ GLfloat x=0;
 int marioPosX = 0, marioPosY = 0, runR=0, runL=0, jump=0, game_over=0, alive = 1;
 int b1 = 1, b2 = 1, b3 = 1, up = 0, mushroom = 0, score = 0, time_left = 1000;
 int show = 1, down = 0, ques = 0, q1 = 0, q2 = 0, world = 1, h = 0;
-float grow = 1,  init_lev = 0, red = 1, green = 1, blue = 1;
+float grow = 1,  init_lev = 0, red = 0, green = 1, blue = 0;
 string game_status = "Game Over!!";
 
 GLvoid *font_style = GLUT_STROKE_MONO_ROMAN;
@@ -18,19 +18,22 @@ void renderStrokeFont(int x,int y,int z,const char* temp)
 {
   glPushMatrix();
 
-  glTranslatef(x,y,z);
-  cout<<x<<" "<<y<<" "<<z<<"\n";
+  glTranslatef(x,y,z+2);
+  //cout<<x<<" "<<y<<" "<<z<<"\n";
   glLineWidth(5);
   glScalef(0.2,0.2,0.2);
   const char *c;
-
+  if(world == 1)
+  	glColor3f(red, green, blue);
+  else
+    glColor3f(1,0,0);
   //cout<<red<<" "<<green<<" "<<blue<<"\n";
   for(c=temp; *c != '\0'; c++)
     glutStrokeCharacter(font_style, *c);
 
-  glColor3f(red, green, blue);
+  
 
-  //glColor3f(1,1,1);
+  glColor3f(1,1,1);
   glPopMatrix();
 }
 
@@ -225,9 +228,8 @@ if(game_over != 1 && game_over!= 2 && time_left != 0){
 		startx+=64;
 	    }
     }
-    else if(world == 2){
+	else if(world == 2){
         glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-		glClearColor(0,0,0,1);
     	if(init_lev >= 0 && init_lev < 100){
     		glClearColor(1,1,1,1);
 	    	string disp = "Level 1 Completed!";
@@ -243,6 +245,7 @@ if(game_over != 1 && game_over!= 2 && time_left != 0){
 			q2 = q1 = 0;
 		}
 		else if(init_lev>=100){
+			glClearColor(0,0,0,0);
 			if(marioPosY < 0)
 				marioPosY = 0;
 		
@@ -428,10 +431,19 @@ if(game_over != 1 && game_over!= 2 && time_left != 0){
 	    if(marioPosX >= 970 && marioPosX <= 1130 && marioPosY >= 150 && down == 0)
     		marioPosY = 170;
     	
-    	    if(mushroom == 1 && grow <= 1.2 && mushroom !=2 && world == 1){
+    	if(mushroom == 1 && grow <= 1.2 && mushroom !=2 && world == 1){
 	    	grow+= 0.01;
 	    	q2 = 1;
-    	    }
+    	}
+		
+		if(marioPosX >= 970 && marioPosX <= 1130 && marioPosY == 0 && down == 1)
+			down = 0;
+		else if(marioPosX >= 970 && marioPosX <= 1130 && marioPosY <= 170 && marioPosX >= 64 && down == 1){
+			marioPosX = 80;
+			marioPosX = 0;
+			show = 0;
+			world = 2;
+		}
     }
     
     
@@ -490,15 +502,7 @@ if(game_over != 1 && game_over!= 2 && time_left != 0){
          q1 = 2;
     if(marioPosX >= 990 && marioPosX <= 1030 && marioPosY >= 160 && b1 == 1 && world == 2)
          b1 = 0;
-    
-    if(marioPosX >= 970 && marioPosX <= 1130 && marioPosY == 0 && down == 1)
-    	down = 0;
-    else if(marioPosX >= 970 && marioPosX <= 1130 && marioPosY <= 170 && marioPosX >= 64 && down == 1){
-    	marioPosY--;
-    	marioPosX = 80;
-    	show = -1;
-    	world = 2;
-    }
+
     
     if(game_over == 1)
     	game_status = "Game Over!";
