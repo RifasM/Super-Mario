@@ -24,7 +24,7 @@ void renderStrokeFont(int p, int q, int r, const char * str) {
     const char * c;
     for (c = str;* c != '\0'; c++)
         glutStrokeCharacter(font_style, * c);
-    
+
     glPopMatrix();
 }
 
@@ -236,13 +236,12 @@ void display() {
                 show = 1;
                 alive = b1 = b2 = b3 = 1;
                 q2 = q1 = 0;
-            } 
+            }
             else if (init_lev >= 0) {
                 if (marioPosY < 0)
                     marioPosY = 0;
 
                 for (int i = 0; i < 22; i++) {
-
                     glBindTexture(GL_TEXTURE_2D, basewall_2);
                     glBegin(GL_QUADS);
                         glVertex3f(startx, starty, 0.0);
@@ -346,12 +345,9 @@ void display() {
                             glVertex3f(startx + 64, starty + 720, 0.0);
                         glEnd();
                     }
-
                     startx += 64;
                 }
-
             }
-
         }
 
         glPushMatrix();
@@ -430,7 +426,7 @@ void display() {
         }
         // scoring part ends
 
-        // Pipe area, disable running 
+        // Pipe area, disable running
         if (marioPosX == 970 && marioPosY <= 150)
             runR = 0;
         else if (marioPosX == 1130 && marioPosY <= 150)
@@ -474,7 +470,7 @@ void display() {
         if (q2 == 2) {
             q2 = 1;
             ques++;
-        } 
+        }
         else if (q1 == 2) {
             q1 = 1;
             ques++;
@@ -507,17 +503,17 @@ void display() {
     else if (up == 0 && jump == 1 && marioPosY > 0)
         marioPosY -= 10;    // Decrease mario position when in jump but going down
     else if (up == 0 && jump == 1 && marioPosY == 0)
-        jump = 0;           // set jump to 0 when jump complete  
+        jump = 0;           // set jump to 0 when jump complete
 
     // Mario and enemy Logic
     if (600 - marioPosX == x && marioPosY == 0)
         game_over = 1;     // enemy hits mario - GAME OVER
     else if ((600 - marioPosX <= x + 10 || 600 - marioPosX <= x - 10) && marioPosY <= 64 && alive != 2)
-        alive = 0;         // Mario Kills enemy 
+        alive = 0;         // Mario Kills enemy
     else if (marioPosX >= 1200)
         game_over = 2;     // Mario Completes Level - LEVEL COMPLETED
 
-    // Game Status and Display 
+    // Game Status and Display
     if (game_over == 1)
         game_status = "Game Over!";
     else if (game_over == 2)
