@@ -86,11 +86,12 @@ void init() {
 }
 
 void display() {
-
+    // Display White as default color
     glColor3f(1, 1, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     GLint startx = 0, starty = 0;
 
+    // If game not over, or time left, continue game
     if (game_over != 1 && game_over != 2 && time_left != 0) {
         if (world == 1) {
 
@@ -561,17 +562,18 @@ int main(int argc, char ** argv) {
 
     init();
 
+    // check if game is running
     while (running) {
         start = SDL_GetTicks();
         while (SDL_PollEvent( & event)) {
             switch (event.type) {
             case SDL_QUIT:
-                running = false;
+                running = false;            // if ESC key is pressed, stop running game
                 break;
             case SDL_KEYDOWN:
                 switch (event.key.keysym.sym) {
                 case SDLK_ESCAPE:
-                    running = false;
+                    running = false;        // if ESC key is pressed, stop running game
                     break;
                 case SDLK_a:
                 case SDLK_LEFT:
