@@ -13,27 +13,23 @@ int show = 1, down = 0, ques = 0, q1 = 0, q2 = 0, world = 1, h = 0;
 float grow = 1,  init_lev = 0, red = 0, green = 1, blue = 0;
 string game_status = "Game Over!!";
 
-GLvoid *font_style = GLUT_STROKE_MONO_ROMAN;
-void renderStrokeFont(int x,int y,int z,const char* temp)
+GLvoid *font_style = GLUT_STROKE_ROMAN;
+void renderStrokeFont(int p,int q,int r,const char* temp)
 {
   glPushMatrix();
 
-  glTranslatef(x,y,z+2);
+  glTranslatef(p,q,r);
   //cout<<x<<" "<<y<<" "<<z<<"\n";
   glLineWidth(5);
   glScalef(0.2,0.2,0.2);
   const char *c;
-  if(world == 1)
-  	glColor3f(red, green, blue);
-  else
-    glColor3f(1,0,0);
+ /* if(world == 2)
+  	red = green = blue =  1;
+  glColor3f(red, green, blue);*/
   //cout<<red<<" "<<green<<" "<<blue<<"\n";
   for(c=temp; *c != '\0'; c++)
     glutStrokeCharacter(font_style, *c);
-
-  
-
-  glColor3f(1,1,1);
+ 
   glPopMatrix();
 }
 
@@ -50,34 +46,57 @@ unsigned int loadTexture(const char* filename)
 	return id;
 }
 
-unsigned int basewall,brick, pipe;
-unsigned int mario, question, enemy;
-unsigned int cloud,bush ,hill, back;
-unsigned int coin, block;
+// common textures
+unsigned int pipe, question, block;
+unsigned int cloud,bush ,hill, nill;
 
-unsigned int basewall_2, bird;
+// world 1 testures
+unsigned int basewall_1, enemy_1, coin_1;
+unsigned int brick_1, mario_1, back_1;
+
+// world 2 textures
+unsigned int basewall_2, enemy_2, coin_2;
+unsigned int brick_2, mario_2, back_2;
 
 void init()
 {
-    //glClearColor(0.48,0.47,1.0,1.0);	//background color and alpha
+    glClearColor(0.48,0.47,1.0,1.0);	//background color and alpha
     glOrtho(0.0,1360.0,0.0,760.0,-10.0,10.0);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_TEXTURE_2D);
-    
+
+	// world 1 textures
+	basewall_1 = loadTexture("./bmps/newbase_1.bmp");
+    brick_1 = loadTexture("./bmps/brick_1.bmp");
+    enemy_1 = loadTexture("./bmps/owl.bmp");
+    coin_1 = loadTexture("./bmps/coin_1.bmp");
+    mario_1 = loadTexture("./bmps/mario_1.bmp");
+    back_1 = loadTexture("./bmps/blue.bmp");
+
+	//world 2 textures
+    basewall_2 = loadTexture("./bmps/newbase_2.bmp");
+    brick_2 = loadTexture("./bmps/brick_2.bmp");
+    enemy_2 = loadTexture("./bmps/bird.bmp");
+    coin_2 = loadTexture("./bmps/coin_2.bmp");
+    mario_2 = loadTexture("./bmps/mario_2.bmp");
+    back_2 = loadTexture("./bmps/black.bmp");
+
+	// common textures
     question = loadTexture("./bmps/question.bmp");
     cloud = loadTexture("./bmps/cloud.bmp");
     bush = loadTexture("./bmps/bush.bmp");
     hill = loadTexture("./bmps/hill.bmp");
     pipe = loadTexture("./bmps/pipe.bmp");
     block = loadTexture("./bmps/block.bmp");
-   
 }
 
 void display()
 {
-if(world == 1){
+	  
+	 glColor3f(1,1,1);
+/*if(world == 1){
     	basewall = loadTexture("./bmps/newbase.bmp");
     	brick = loadTexture("./bmps/brick_1.bmp");
     	enemy = loadTexture("./bmps/owl.bmp");
@@ -92,17 +111,20 @@ if(world == 1){
         mario = loadTexture("./bmps/mario_2.bmp");
         back = loadTexture("./bmps/black.bmp");
         enemy = loadTexture("./bmps/bird.bmp");
-    }
+    }*/
+	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 	// glLoadIdentity();
     GLint startx=0, starty=0;
 
+
+
 if(game_over != 1 && game_over!= 2 && time_left != 0){
     if(world == 1){
-   	    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+   	    
  	    glClearColor(0.48,0.47,1.0,1.0);
 	    for(int i=0;i<22;i++){
 
-		glBindTexture(GL_TEXTURE_2D, basewall);
+		glBindTexture(GL_TEXTURE_2D, basewall_1);
 		glBegin(GL_QUADS);
 		    glTexCoord2f(0.0,1.0);
 		    glVertex3f(startx,starty,0.0);
@@ -142,7 +164,7 @@ if(game_over != 1 && game_over!= 2 && time_left != 0){
 		}
 		
 		if(i==7){
-		   glBindTexture(GL_TEXTURE_2D, coin);
+		   glBindTexture(GL_TEXTURE_2D, coin_1);
 		    glBegin(GL_QUADS);
 		        glTexCoord2f(0.0,1.0);
 		        glVertex3f(startx,starty+664,0.0);
@@ -158,7 +180,7 @@ if(game_over != 1 && game_over!= 2 && time_left != 0){
 		glPushMatrix();
 		if(i==10 && alive == 1){
 		    glTranslatef(-x,0,1);
-		    glBindTexture(GL_TEXTURE_2D, enemy);
+		    glBindTexture(GL_TEXTURE_2D, enemy_1);
 		    glBegin(GL_QUADS);
 		        glTexCoord2f(0.0,1.0);
 		        glVertex3f(startx,starty+128,0.0);
@@ -202,13 +224,13 @@ if(game_over != 1 && game_over!= 2 && time_left != 0){
 		if(i>=9 && i<=13)
 		{
 		    if(b1 == 0 || b1 == 2 && i == 9)
-		    	glBindTexture(GL_TEXTURE_2D, back);
+		    	glBindTexture(GL_TEXTURE_2D, back_1);
 		    else if(b2 == 0 || b2 == 2 && i == 11)
-		    	glBindTexture(GL_TEXTURE_2D, back);
+		    	glBindTexture(GL_TEXTURE_2D, back_1);
 		    else if(b3 == 0 || b3 == 2 && i == 13)
-		    	glBindTexture(GL_TEXTURE_2D, back);
+		    	glBindTexture(GL_TEXTURE_2D, back_1);
 		    else if(i%2)
-		        glBindTexture(GL_TEXTURE_2D, brick);
+		        glBindTexture(GL_TEXTURE_2D, brick_1);
 		    else if(i == 12 && q2 == 1)
 		    	glBindTexture(GL_TEXTURE_2D, block);
 		    else
@@ -229,9 +251,8 @@ if(game_over != 1 && game_over!= 2 && time_left != 0){
 	    }
     }
 	else if(world == 2){
-        glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-    	if(init_lev >= 0 && init_lev < 100){
-    		glClearColor(1,1,1,1);
+    	if(init_lev >= 0 && init_lev < 100){   
+			glClearColor(0,0,0,1); 		
 	    	string disp = "Level 1 Completed!";
 			renderStrokeFont(600,500,1,disp.c_str());
 			disp = "Level 2";
@@ -242,16 +263,15 @@ if(game_over != 1 && game_over!= 2 && time_left != 0){
 			x = 0;
 			show = 1;
 			alive = b1 = b2 = b3 = 1;
-			q2 = q1 = 0;
+			q2 = q1 = 0;			
 		}
-		else if(init_lev>=100){
-			glClearColor(0,0,0,0);
+		else if(init_lev>=0){
 			if(marioPosY < 0)
 				marioPosY = 0;
 		
 			for(int i=0;i<22;i++){
 
-				glBindTexture(GL_TEXTURE_2D, basewall);
+				glBindTexture(GL_TEXTURE_2D, basewall_2);
 				glBegin(GL_QUADS);
 					glVertex3f(startx,starty,0.0);
 					glTexCoord2f(0.0,0.0);
@@ -264,7 +284,7 @@ if(game_over != 1 && game_over!= 2 && time_left != 0){
 				
 				if(i== 0){
 				for(int j = 0; j < 800 ; j+=64){
-					glBindTexture(GL_TEXTURE_2D, brick);
+					glBindTexture(GL_TEXTURE_2D, brick_2);
 						glBegin(GL_QUADS);
 						glTexCoord2f(0.0,1.0);
 						glVertex3f(startx,starty+j,0.0);
@@ -280,7 +300,7 @@ if(game_over != 1 && game_over!= 2 && time_left != 0){
 				glPushMatrix();
 				if(i==10 && alive == 1){
 					glTranslatef(-x,0,2);
-					glBindTexture(GL_TEXTURE_2D, enemy);
+					glBindTexture(GL_TEXTURE_2D, enemy_2);
 					glBegin(GL_QUADS);
 					glTexCoord2f(0.0,1.0);
 					glVertex3f(startx,starty+128,0.0);
@@ -295,7 +315,7 @@ if(game_over != 1 && game_over!= 2 && time_left != 0){
 				glPopMatrix();
 				
 				if(i==7){
-				glBindTexture(GL_TEXTURE_2D, coin);
+				glBindTexture(GL_TEXTURE_2D, coin_2);
 					glBegin(GL_QUADS);
 					glTexCoord2f(0.0,1.0);
 					glVertex3f(startx,starty+664,0.0);
@@ -329,7 +349,7 @@ if(game_over != 1 && game_over!= 2 && time_left != 0){
 				}
 				
 				if(i == 16 && b1 == 1){
-					glBindTexture(GL_TEXTURE_2D, brick);
+					glBindTexture(GL_TEXTURE_2D, brick_2);
 					glBegin(GL_QUADS);
 					glTexCoord2f(0.0,1.0);
 					glVertex3f(startx,starty+320,0.0);
@@ -343,7 +363,7 @@ if(game_over != 1 && game_over!= 2 && time_left != 0){
 				}
 				
 				if(i>2 && i<22){
-					glBindTexture(GL_TEXTURE_2D, brick);
+					glBindTexture(GL_TEXTURE_2D, brick_2);
 					glBegin(GL_QUADS);
 					glTexCoord2f(0.0,1.0);
 					glVertex3f(startx,starty+720,0.0);
@@ -364,10 +384,14 @@ if(game_over != 1 && game_over!= 2 && time_left != 0){
 	    
     }
 
-    glPushMatrix();
+    
+	glPushMatrix();
     startx=starty=0;
     glTranslated(marioPosX, marioPosY, show);
-    glBindTexture(GL_TEXTURE_2D, mario);
+	if(world == 1)
+    	glBindTexture(GL_TEXTURE_2D, mario_1);
+	else
+		glBindTexture(GL_TEXTURE_2D, mario_2);
     glBegin(GL_QUADS);
         glTexCoord2f(0.0,1.0);
         glVertex3f(startx,starty+128,0.0);
@@ -379,9 +403,25 @@ if(game_over != 1 && game_over!= 2 && time_left != 0){
         glVertex3f(startx+(64*grow),starty+128,0.0);
     glEnd();
     glPopMatrix();
-    x+=1;
-    time_left -= 0.5;
-    score++;
+
+	glBindTexture(GL_TEXTURE_2D, nill);
+    glBegin(GL_QUADS);
+        glTexCoord2f(0.0,1.0);
+        glVertex3f(0,0,0);
+        glTexCoord2f(0.0,0.0);
+        glVertex3f(0,0,0);
+        glTexCoord2f(1.0,0.0);
+        glVertex3f(0,0,0);
+        glTexCoord2f(1.0,1.0);
+        glVertex3f(0,0,0);
+    glEnd();
+	
+	if(alive == 1)
+    	x+=1;
+	if(init_lev == 0 || init_lev>=100){
+    	time_left -= 0.5;
+   	     score++;
+	}
   }
     	
     //cout<<"Mario("<<marioPosX<<", "<<marioPosY<<")\n";
@@ -502,6 +542,7 @@ if(game_over != 1 && game_over!= 2 && time_left != 0){
          q1 = 2;
     if(marioPosX >= 990 && marioPosX <= 1030 && marioPosY >= 160 && b1 == 1 && world == 2)
          b1 = 0;
+
 
     
     if(game_over == 1)
