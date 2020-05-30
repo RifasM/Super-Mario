@@ -393,6 +393,7 @@ void display() {
     }
 
     if (world == 1) {
+        // when world is 1 - 1
         // scoring part starts
         if (alive == 0) {
             score += 100;
@@ -438,12 +439,25 @@ void display() {
         if (marioPosX >= 970 && marioPosX <= 1130 && marioPosY >= 150 && down == 0)
             marioPosY = 170;
 
-        
+        // Make mario grow when mushroom is hit
         if (mushroom == 1 && grow <= 1.2 && mushroom != 2 && world == 1) {
             grow += 0.01;
             q2 = 1;
         }
 
+        // Brick and Question logic
+        if (marioPosX >= 570 && marioPosX <= 590 && marioPosY >= 160 && b1 != 2)
+            b1 = 0;             // set brick 1 to broken
+        else if (marioPosX >= 690 && marioPosX <= 710 && marioPosY >= 160 && b2 != 2)
+            b2 = 0;             // set brick 2 to broken
+        else if (marioPosX >= 820 && marioPosX <= 840 && marioPosY >= 160 && b3 != 2)
+            b3 = 0;             // set brick 3 to broken
+        else if (marioPosX >= 620 && marioPosX <= 660 && marioPosY >= 160 && q1 != 2)
+            q1 = 1;             // set question 1 to activated
+        else if (marioPosX >= 760 && marioPosX <= 800 && marioPosY >= 160 && mushroom != 2)
+            mushroom = 1;       // set mushroom to activated
+
+        // If mario is at pipe, going to second level
         if (marioPosX >= 970 && marioPosX <= 1130 && marioPosY == 0 && down == 1)
             down = 0;
         else if (marioPosX >= 970 && marioPosX <= 1130 && marioPosY <= 170 && marioPosX >= 64 && down == 1) {
@@ -453,61 +467,62 @@ void display() {
             world = 2;
         }
     }
+    else if(world == 2){
+        // when world 1 - 2
+        // Scoring starts
+        if (q2 == 2) {
+            q2 = 1;
+            ques++;
+        } 
+        else if (q1 == 2) {
+            q1 = 1;
+            ques++;
+        }
+        // scoring ends
 
+        // Question and Brick Logic
+        if (marioPosX >= 620 && marioPosX <= 660 && marioPosY >= 160 && q2 == 0)
+            q2 = 2;     // Question 2 is activated
+        if (marioPosX >= 820 && marioPosX <= 840 && marioPosY >= 160 && q1 == 0)
+            q1 = 2;     // Question 1 is activated
+        if (marioPosX >= 990 && marioPosX <= 1030 && marioPosY >= 160 && b1 == 1)
+            b1 = 0;     // Brick 1 is broken
+    }
+
+    // Move mario around screen
     if (runR == 1)
         marioPosX += 10;
     else if (runL == 1)
         if (marioPosX != 0)
             marioPosX -= 10;
 
+    // Mario Jumping Logic
     if (up == 1 && jump == 0) {
-        jump = 1;
+        jump = 1;           // start jumping
     } else if (up == 1 && jump == 1 && marioPosY < 200)
-        marioPosY += 10;
+        marioPosY += 10;    // increase postion when jumping and going up
     else if (up == 1 && jump == 1 && marioPosY == 200)
-        up = 0;
+        up = 0;             // Once max height is reached, set up to 0, indicating, mario is going down
     else if (up == 0 && jump == 1 && marioPosY > 0)
-        marioPosY -= 10;
+        marioPosY -= 10;    // Decrease mario position when in jump but going down
     else if (up == 0 && jump == 1 && marioPosY == 0)
-        jump = 0;
+        jump = 0;           // set jump to 0 when jump complete  
 
-    if (q2 == 2 && world == 2) {
-        q2 = 1;
-        ques++;
-    } else if (q1 == 2 && world == 2) {
-        q1 = 1;
-        ques++;
-    }
-
+    // Mario and enemy Logic
     if (600 - marioPosX == x && marioPosY == 0)
-        game_over = 1;
-    else if (marioPosX >= 570 && marioPosX <= 590 && marioPosY >= 160 && b1 != 2 && world == 1)
-        b1 = 0;
-    else if (marioPosX >= 690 && marioPosX <= 710 && marioPosY >= 160 && b2 != 2 && world == 1)
-        b2 = 0;
-    else if (marioPosX >= 820 && marioPosX <= 840 && marioPosY >= 160 && b3 != 2 && world == 1)
-        b3 = 0;
-    else if (marioPosX >= 620 && marioPosX <= 660 && marioPosY >= 160 && q1 != 2 && world == 1)
-        q1 = 1;
+        game_over = 1;     // enemy hits mario - GAME OVER
     else if ((600 - marioPosX <= x + 10 || 600 - marioPosX <= x - 10) && marioPosY <= 64 && alive != 2)
-        alive = 0;
-    else if (marioPosX >= 760 && marioPosX <= 800 && marioPosY >= 160 && mushroom != 2 && world == 1)
-        mushroom = 1;
+        alive = 0;         // Mario Kills enemy 
     else if (marioPosX >= 1200)
-        game_over = 2;
+        game_over = 2;     // Mario Completes Level - LEVEL COMPLETED
 
-    if (marioPosX >= 620 && marioPosX <= 660 && marioPosY >= 160 && q2 == 0 && world == 2)
-        q2 = 2;
-    if (marioPosX >= 820 && marioPosX <= 840 && marioPosY >= 160 && q1 == 0 && world == 2)
-        q1 = 2;
-    if (marioPosX >= 990 && marioPosX <= 1030 && marioPosY >= 160 && b1 == 1 && world == 2)
-        b1 = 0;
-
+    // Game Status and Display 
     if (game_over == 1)
         game_status = "Game Over!";
     else if (game_over == 2)
         game_status = "Level Completed!";
 
+    // If time up or killed, GAME OVER
     if (game_over != 0 || time_left == 0)
         renderStrokeFont(600, 400, 1, game_status.c_str());
 
@@ -522,6 +537,7 @@ void display() {
     string line1_t = "TIME";
     string line2_t = to_string(time_left);
 
+    // Display Score, Points, World and Time
     renderStrokeFont(100, 700, 1, line1_m.c_str());
     renderStrokeFont(900, 700, 1, line1_w.c_str());
     renderStrokeFont(1150, 700, 1, line1_t.c_str());
