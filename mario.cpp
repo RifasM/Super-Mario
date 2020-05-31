@@ -1,5 +1,6 @@
 // Steps to run
 // g++ mario.cpp -lGL -lGLU -lglut -lm -lSDL -lSDL_image
+// ./a.out
 #include <SDL/SDL.h>
 #include <GL/gl.h>
 #include <iostream>
