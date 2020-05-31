@@ -1,3 +1,4 @@
+// Steps to run
 #include <SDL/SDL.h>
 #include <GL/gl.h>
 #include <iostream>
